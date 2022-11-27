@@ -1,0 +1,21 @@
+{
+  "name": "study_three.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "source": "src/index.html",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "scripts": {
+    "dev": "parcel",
+    "build": "parcel build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.8.0"
+  },
+  "dependencies": {
+    "three": "^0.146.0"
+  }
+}
