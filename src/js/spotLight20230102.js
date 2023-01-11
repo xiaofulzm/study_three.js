@@ -7,7 +7,7 @@ const gui = new dat.GUI();
 
 /****
  *  
- *   目标: 点光源
+ *   目标: 聚光灯
  *       
  ****/
 
@@ -53,34 +53,28 @@ scene.add(plane)
 const light = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(light);
 
-// 点光源
-const smallBall = new THREE.Mesh(
-    new THREE.SphereBufferGeometry(0.1,20,20),
-    new THREE.MeshBasicMaterial({color:0xff0000})
-)
-smallBall.position.set(2,2,2);
+// 聚光灯
+const spotLight = new THREE.SpotLight(0xffffff,1);
 
-// 点光源
-const pointLight = new THREE.PointLight(0xff0000,1);
-
-pointLight.castShadow = true; // 设置光照投射阴影
+spotLight.castShadow = true; // 设置光照投射阴影
 
 // 设置阴影贴图的模糊度
-pointLight.shadow.radius = 20;
+spotLight.shadow.radius = 20;
 // 设置阴影贴图的分辨率
-pointLight.shadow.mapSize.set(512,512)
+spotLight.shadow.mapSize.set(4096, 4096)
 
-pointLight.decay = 0;
+spotLight.target = sphere; // 设置聚光灯的目标
+spotLight.angle = Math.PI / 6   // 设置聚光灯的角度
+spotLight.distance = 0;  // 从光源发出光的最大距离, 其强度根据光源的距离线性衰减
+spotLight.penumbra = 0;  // 聚光锥的半影衰减百分比。在0和1之间的值
+spotLight.decay = 0;     // 沿着光照距离衰减
+spotLight.intensity = 2; // 光照强度
+
+
 
 // 光照射的位置
-// pointLight.position.set(2,2,2)
-// scene.add(pointLight);
-
-// 设置小球的点光源
-smallBall.add(pointLight);
-scene.add(smallBall);
-
-
+spotLight.position.set(10, 10, 10)
+scene.add(spotLight);
 
 gui
     .add(sphere.position, 'x')
@@ -89,11 +83,16 @@ gui
     .step(0.1)
 
 gui
-    .add(pointLight, 'distance')
+    .add(spotLight, 'distance')
     .min(0)
-    .max(5)
-    .step(0.001)
+    .max(1)
+    .step(0.01)
 
+gui
+    .add(spotLight, 'penumbra')
+    .min(0)
+    .max(1)
+    .step(0.01)
 
 // 初始化渲染器
 const renderder = new THREE.WebGLRenderer();
@@ -121,16 +120,18 @@ controls.enableDamping = true;
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
-const clock = new THREE.Clock();
+
+
 
 
 function render() {
     // 过去时钟运行的总时长
-    let time = clock.getElapsedTime();
-    smallBall.position.x = Math.sin(time)*3;
-    smallBall.position.z = Math.cos(time)*3;
-    smallBall.position.y = 2 + Math.sin(time);
-  
+    // let time = clock.getElapsedTime();
+    // let delta = clock.getDelta(); // 两次获取时间的间隔时间
+    // let t = time % 5;
+    // mesh.position.x = t * 1;
+
+    // console.log(time,delta)
     controls.update();
     renderder.render(scene, camera);
     requestAnimationFrame(render)
